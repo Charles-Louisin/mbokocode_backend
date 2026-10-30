@@ -86,9 +86,9 @@ export const pricingUpdateSchema = z
     kicker: optionalText(40),
     description: text(400),
     priceType: z.enum(PRICE_TYPES),
-    // Montants saisis en unités mineures (centimes), comme en base.
-    priceMin: z.number().int().min(0).max(100_000_000).nullable(),
-    priceMax: z.number().int().min(0).max(100_000_000).nullable(),
+    // Montants ×100 (centimes), comme en base : jusqu'à 100 millions de FCFA.
+    priceMin: z.number().int().min(0).max(10_000_000_000).nullable(),
+    priceMax: z.number().int().min(0).max(10_000_000_000).nullable(),
     features: list(20),
     deliveryEstimate: optionalText(80),
     isPublished: z.boolean(),

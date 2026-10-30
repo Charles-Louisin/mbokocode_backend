@@ -39,7 +39,9 @@ async function assertKnownProject(slug: string | undefined) {
   if (!exists) throw new AppError(400, "VALIDATION_ERROR", "Projet inconnu.", { projectSlug: ["Projet inconnu."] });
 }
 
-function notifyPendingReview(review: ReviewDoc, mailer: Mailer, logger: Logger, kind: "nouvel" | "modifié") {
+// Les avis sont publiés directement : Charles est prévenu de chaque publication et peut masquer ou
+// refuser un avis après coup depuis l'admin.
+function notifyPublishedReview(review: ReviewDoc, mailer: Mailer, logger: Logger, kind: "nouvel" | "modifié") {
   const admin = mailer.adminEmail;
   if (!admin) return;
   const stars = "★".repeat(review.rating) + "☆".repeat(5 - review.rating);
@@ -47,9 +49,9 @@ function notifyPendingReview(review: ReviewDoc, mailer: Mailer, logger: Logger, 
   void mailer
     .send({
       to: admin,
-      subject: `Avis ${kind} à modérer — ${stars}`,
-      text: `Avis ${kind} de ${name} (${stars}), en attente de modération.\n\n${review.content}`,
-      html: `<p>Avis ${kind} de <strong>${escapeHtml(name)}</strong> (${stars}), en attente de modération.</p><blockquote>${escapeHtml(review.content)}</blockquote>`,
+      subject: `Avis ${kind} publié — ${stars}`,
+      text: `Avis ${kind} de ${name} (${stars}), publié sur le site. Tu peux le masquer depuis l'admin si besoin.\n\n${review.content}`,
+      html: `<p>Avis ${kind} de <strong>${escapeHtml(name)}</strong> (${stars}), publié sur le site. Tu peux le masquer depuis l'admin si besoin.</p><blockquote>${escapeHtml(review.content)}</blockquote>`,
       idempotencyKey: `review-${review.id as string}-${(review.get("updatedAt") as Date).getTime()}`,
     })
     .catch((err: Error) => logger.warn({ review: review.id as string, reason: err.message }, "notification d'avis impossible"));
@@ -109,7 +111,8 @@ export function createReviewsRouter({ guards, mailer, logger, writeLimit = 10 }:
         ...fields,
         userId: user.id,
         authorNameSnapshot: authorName,
-        status: "pending",
+        status: "approved",
+        publishedAt: new Date(),
         consentAt: new Date(),
       });
     } catch (err) {
@@ -118,12 +121,13 @@ export function createReviewsRouter({ guards, mailer, logger, writeLimit = 10 }:
       }
       throw err;
     }
-    logger.info({ review: review.id as string }, "nouvel avis en attente");
-    notifyPendingReview(review, mailer, logger, "nouvel");
+    logger.info({ review: review.id as string }, "nouvel avis publié");
+    notifyPublishedReview(review, mailer, logger, "nouvel");
     res.status(201).json({ data: toOwnerReview(review) });
   });
 
-  // Toute modification repasse l'avis en modération : un avis publié ne change pas sans relecture.
+  // Une modification est publiée directement, sauf si l'avis a été masqué ou refusé depuis l'admin :
+  // cette décision reste en place.
   router.patch("/:id", guards.requireUser, writeLimiter, async (req, res) => {
     const { id } = objectIdParamSchema.parse(req.params);
     const input = reviewUpdateSchema.parse(req.body);
@@ -134,9 +138,14 @@ export function createReviewsRouter({ guards, mailer, logger, writeLimit = 10 }:
     const review = await Review.findOne({ _id: id, userId: currentUser(res).id });
     // Avis d'un autre compte : même réponse qu'un avis inexistant.
     if (!review) throw notFound("Avis introuvable.");
-    review.set({ ...fields, ...(authorName ? { authorNameSnapshot: authorName } : {}), status: "pending", publishedAt: undefined });
+    const moderated = review.status === "hidden" || review.status === "rejected";
+    review.set({
+      ...fields,
+      ...(authorName ? { authorNameSnapshot: authorName } : {}),
+      ...(moderated ? {} : { status: "approved", publishedAt: review.publishedAt ?? new Date() }),
+    });
     await review.save();
-    notifyPendingReview(review, mailer, logger, "modifié");
+    if (!moderated) notifyPublishedReview(review, mailer, logger, "modifié");
     res.json({ data: toOwnerReview(review) });
   });
 

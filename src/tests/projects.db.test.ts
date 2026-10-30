@@ -86,7 +86,7 @@ describe("projets publics (base réelle)", () => {
 
   it("offres et réglages publiés", async () => {
     const pricing = await request(app).get("/api/v1/pricing");
-    expect(pricing.body.data.map((offer: { priceMin?: number }) => offer.priceMin).slice(0, 3)).toEqual([50000, 100000, 200000]);
+    expect(pricing.body.data.map((offer: { priceMin?: number }) => offer.priceMin).slice(0, 3)).toEqual([33_000_000, 65_500_000, 131_000_000]);
     const settings = await request(app).get("/api/v1/settings");
     expect(settings.body.data.publicName).toBe("MBOKO CODE");
   });

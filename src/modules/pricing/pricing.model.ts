@@ -10,8 +10,8 @@ const pricingPackageSchema = new Schema(
     kicker: { type: String, trim: true, maxlength: 40 },
     description: { type: String, required: true, trim: true, maxlength: 400 },
     priceType: { type: String, enum: [...PRICE_TYPES], required: true },
-    currency: { type: String, default: "EUR", uppercase: true, match: /^[A-Z]{3}$/ },
-    // Montants en unités mineures (centimes) pour éviter les arrondis flottants.
+    currency: { type: String, default: "XAF", uppercase: true, match: /^[A-Z]{3}$/ },
+    // Montants ×100 (centimes, quelle que soit la devise) pour éviter les arrondis flottants.
     priceMin: { type: Number, min: 0, validate: Number.isInteger },
     priceMax: { type: Number, min: 0, validate: Number.isInteger },
     features: { type: [String], default: [] },

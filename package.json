@@ -15,7 +15,8 @@
     "seed": "tsx --env-file-if-exists=.env src/scripts/seed.ts",
     "dev:local-db": "tsx --env-file-if-exists=.env src/scripts/dev-local-db.ts",
     "db:status": "tsx --env-file-if-exists=.env src/scripts/db-status.ts",
-    "settings:whatsapp": "tsx --env-file-if-exists=.env src/scripts/set-whatsapp.ts"
+    "settings:whatsapp": "tsx --env-file-if-exists=.env src/scripts/set-whatsapp.ts",
+    "currency:xaf": "tsx --env-file-if-exists=.env src/scripts/currency-xaf.ts"
   },
   "dependencies": {
     "better-auth": "^1.7.14",

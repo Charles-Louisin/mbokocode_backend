@@ -36,7 +36,7 @@ export const leadInputSchema = z
     features: z.array(z.enum(keysOf(FEATURES))).max(10).default([]),
     constraints: optionalText(1500),
     budget: z.enum(keysOf(BUDGETS)).optional(),
-    currency: z.enum(["EUR", "XAF"]).default("EUR"),
+    currency: z.enum(["EUR", "XAF"]).default("XAF"),
     deadline: z.enum(keysOf(DEADLINES)).optional(),
     name: z.string().trim().min(2, "Indique ton nom.").max(120),
     email: z.string().trim().max(200).pipe(z.email("Adresse e-mail invalide.")),

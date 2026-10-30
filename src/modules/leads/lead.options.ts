@@ -25,13 +25,15 @@ export const FEATURES = {
   integrations: "Intégrations (API, outils)",
 } as const;
 
+// Les clés sont des identifiants historiques (déjà présents dans les demandes en base) : seuls
+// les libellés, désormais en francs CFA, s'affichent.
 export const BUDGETS = {
   "a-definir": "À définir ensemble",
-  "moins-500": "Moins de 500 €",
-  "500-1000": "500 – 1 000 €",
-  "1000-2000": "1 000 – 2 000 €",
-  "2000-5000": "2 000 – 5 000 €",
-  "plus-5000": "Plus de 5 000 €",
+  "moins-500": "Moins de 250 000 FCFA",
+  "500-1000": "250 000 – 500 000 FCFA",
+  "1000-2000": "500 000 – 1 000 000 FCFA",
+  "2000-5000": "1 000 000 – 3 000 000 FCFA",
+  "plus-5000": "Plus de 3 000 000 FCFA",
 } as const;
 
 export const DEADLINES = {

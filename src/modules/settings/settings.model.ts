@@ -30,7 +30,7 @@ const siteSettingsSchema = new Schema(
       isAvailable: { type: Boolean, default: false },
       label: { type: String, trim: true, maxlength: 120 },
     },
-    currency: { type: String, default: "EUR", uppercase: true, match: /^[A-Z]{3}$/ },
+    currency: { type: String, default: "XAF", uppercase: true, match: /^[A-Z]{3}$/ },
     seo: {
       title: { type: String, trim: true, maxlength: 70 },
       description: { type: String, trim: true, maxlength: 160 },

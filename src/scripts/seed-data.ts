@@ -209,7 +209,9 @@ export const seedProjects: SeedProject[] = [
   },
 ];
 
-const euros = (amount: number) => amount * 100;
+// Prix en francs CFA, stockés ×100 comme des centimes (conversion des anciens prix en euros à la
+// parité fixe, arrondie ; Charles les ajuste ensuite depuis l'admin).
+const fcfa = (amount: number) => amount * 100;
 
 type SeedPricing = Omit<Partial<PricingPackageData>, "createdAt" | "updatedAt"> &
   Pick<PricingPackageData, "name" | "slug" | "description" | "priceType">;
@@ -222,7 +224,7 @@ export const seedPricing: SeedPricing[] = [
     serviceType: "site",
     description: "Une page unique pensée pour convertir : message clair, parcours fluide, impact immédiat.",
     priceType: "from",
-    priceMin: euros(500),
+    priceMin: fcfa(330_000),
     features: ["4 à 7 sections", "Conception orientée conversion", "Site responsive", "Structure optimisée pour le SEO", "Google Analytics"],
     deliveryEstimate: "1 à 2 semaines",
     sortOrder: 1,
@@ -234,7 +236,7 @@ export const seedPricing: SeedPricing[] = [
     serviceType: "site",
     description: "Une vitrine multi-pages pour présenter ton activité avec une expérience soignée.",
     priceType: "from",
-    priceMin: euros(1000),
+    priceMin: fcfa(655_000),
     features: ["5 pages", "UI/UX sur mesure", "Formulaire de contact", "Tableau de bord admin", "Formation à l'autonomie"],
     deliveryEstimate: "4 à 8 semaines",
     sortOrder: 2,
@@ -246,7 +248,7 @@ export const seedPricing: SeedPricing[] = [
     serviceType: "ecommerce",
     description: "Une boutique complète, prête à vendre, avec catalogue, panier et moyens de paiement.",
     priceType: "from",
-    priceMin: euros(2000),
+    priceMin: fcfa(1_310_000),
     features: ["5 pages + commande et panier", "50 fiches produits remplies", "Dashboard admin et statistiques", "Intégration des moyens de paiement"],
     deliveryEstimate: "8 à 16 semaines",
     sortOrder: 3,
@@ -258,7 +260,7 @@ export const seedPricing: SeedPricing[] = [
     serviceType: "maintenance",
     description: "Reprendre un site existant : design, structure, performance et parcours, pour qu'il convertisse enfin.",
     priceType: "from",
-    priceMin: euros(500),
+    priceMin: fcfa(330_000),
     features: ["Audit de l'existant", "Nouveau design et structure", "Migration des contenus", "Optimisation SEO et performance"],
     deliveryEstimate: "1 à 2 semaines",
     sortOrder: 4,
@@ -270,7 +272,7 @@ export const seedPricing: SeedPricing[] = [
     serviceType: "conseil",
     description: "Des textes clairs et convaincants pour donner de la voix à ton site.",
     priceType: "from",
-    priceMin: euros(200),
+    priceMin: fcfa(130_000),
     features: ["Rédaction des textes", "Réécriture de contenu existant", "Mise à jour de blog"],
     sortOrder: 5,
   },
@@ -312,7 +314,7 @@ export const seedSettings: Omit<Partial<SiteSettingsData>, "createdAt" | "update
   ],
   // À confirmer depuis l'admin : la disponibilité n'est affichée que si elle est tenue à jour.
   availability: { isAvailable: false },
-  currency: "EUR",
+  currency: "XAF",
   seo: {
     title: "MBOKO CODE — Charles, développeur full-stack",
     description: "Applications web, mobiles et plateformes sur mesure, de l'idée à la mise en production.",

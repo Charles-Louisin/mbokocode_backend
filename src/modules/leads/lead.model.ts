@@ -49,7 +49,7 @@ const leadSchema = new Schema(
     features: { type: [{ type: String, enum: keysOf(FEATURES) }], default: [] },
     constraints: { type: String, trim: true, maxlength: 1500 },
     budget: { type: String, enum: keysOf(BUDGETS) },
-    currency: { type: String, default: "EUR", match: /^[A-Z]{3}$/ },
+    currency: { type: String, default: "XAF", match: /^[A-Z]{3}$/ },
     deadline: { type: String, enum: keysOf(DEADLINES) },
 
     sourcePage: { type: String, trim: true, maxlength: 200 },

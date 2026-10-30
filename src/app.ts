@@ -19,6 +19,7 @@ import { createLeadsRouter } from "./modules/leads/leads.routes.js";
 import { pricingRouter, servicesRouter } from "./modules/pricing/pricing.routes.js";
 import { createReviewsRouter } from "./modules/reviews/reviews.routes.js";
 import { projectsRouter } from "./modules/projects/projects.routes.js";
+import { createRatesRouter } from "./modules/rates/rates.routes.js";
 import { settingsRouter } from "./modules/settings/settings.routes.js";
 import { createUploadsHandler, UPLOADS_PATH } from "./modules/uploads/uploads.js";
 import { createResendMailer, type Mailer } from "./services/email/mailer.js";
@@ -26,7 +27,7 @@ import { AppError } from "./utils/errors.js";
 
 export const JSON_BODY_LIMIT = "100kb";
 
-type AppDeps = { mailer?: Mailer; leadsRateLimit?: number; reviewsWriteLimit?: number };
+type AppDeps = { mailer?: Mailer; leadsRateLimit?: number; reviewsWriteLimit?: number; ratesFetcher?: typeof fetch };
 
 export function createApp(config: AppConfig, logger: Logger, deps: AppDeps = {}) {
   const mailer = deps.mailer ?? createResendMailer(config, logger);
@@ -98,6 +99,7 @@ export function createApp(config: AppConfig, logger: Logger, deps: AppDeps = {})
   api.use("/pricing", pricingRouter);
   api.use("/settings", settingsRouter);
   api.use("/content", contentRouter);
+  api.use("/rates", createRatesRouter({ fetcher: deps.ratesFetcher }));
   api.use("/leads", createLeadsRouter({ mailer, logger, rateLimit: deps.leadsRateLimit }));
   api.use("/reviews", createReviewsRouter({ guards, mailer, logger, writeLimit: deps.reviewsWriteLimit }));
   // Méthodes de connexion réellement disponibles, pour n'afficher que des boutons qui marchent.
