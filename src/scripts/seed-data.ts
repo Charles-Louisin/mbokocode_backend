@@ -468,6 +468,27 @@ export const seedContent = {
       { url: "https://www.tiktok.com/@yncharles2/video/7660623263323770145", caption: "Catastrophe 😭", views: "52,6 K", cover: "/images/tiktok/7660623263323770145.webp" },
     ],
   },
+  // TikTok @mbokocode, le compte entreprise : chiffres et vues relevés sur le profil public le
+  // 31 octobre 2026. Miniatures : couvertures des vidéos, enregistrées dans public/images/tiktok.
+  businessCreator: {
+    platform: "tiktok" as const,
+    handle: "mbokocode",
+    profileUrl: "https://www.tiktok.com/@mbokocode",
+    bio: "Création de sites, applications et boutiques en ligne pour commerçants et entreprises. IA, motion design, contenu publicitaire.",
+    recordedAt: "31 octobre 2026",
+    stats: [
+      { label: "Abonnés", value: "34" },
+      { label: "J'aime", value: "207" },
+      { label: "Vidéos", value: "5" },
+    ],
+    videos: [
+      { url: "https://www.tiktok.com/@mbokocode/video/7702560670461463828", caption: "5 excuses qu'ils donnent pour justifier qu'ils n'ont pas de site web", views: "391", cover: "/images/tiktok/7702560670461463828.webp" },
+      { url: "https://www.tiktok.com/@mbokocode/video/7702182247817858324", caption: "Bookez-moi déjà 😏 Le portfolio de MBOKO CODE est disponible", views: "432", cover: "/images/tiktok/7702182247817858324.webp" },
+      { url: "https://www.tiktok.com/@mbokocode/video/7701761012814400788", caption: "Le paiement en Guinée est difficile, surtout pour le local", views: "406", cover: "/images/tiktok/7701761012814400788.webp" },
+      { url: "https://www.tiktok.com/@mbokocode/video/7699187803522977045", caption: "On ne sait pas où l'idée peut sortir 😂", views: "552", cover: "/images/tiktok/7699187803522977045.webp" },
+      { url: "https://www.tiktok.com/@mbokocode/video/7698834568857619733", caption: "Jour 1 de mon entreprise 🙏🏾", views: "733", cover: "/images/tiktok/7698834568857619733.webp" },
+    ],
+  },
   licenceVsCustom: [
     { criterion: "Délai", licence: "Quelques jours à quelques semaines", custom: "Plusieurs semaines à plusieurs mois" },
     { criterion: "Coût de départ", licence: "Souvent plus accessible", custom: "Investissement plus large" },

@@ -132,6 +132,36 @@ export const settingsUpdateSchema = z
 const icon = z.enum(ICON_KEYS).optional();
 const titleText = z.object({ title: text(60), text: text(300) }).strict();
 
+// Un compte TikTok (personnel ou entreprise) : chiffres datés et vidéos.
+const tiktokAccount = z
+  .object({
+    platform: z.literal("tiktok").default("tiktok"),
+    handle: text(60),
+    profileUrl: z.url({ protocol: /^https$/ }).max(300),
+    bio: z.string().trim().max(300).optional(),
+    recordedAt: text(40),
+    stats: z.array(z.object({ label: text(40), value: text(20) }).strict()).max(6),
+    videos: z
+      .array(
+        z
+          .object({
+            url: z.url({ protocol: /^https$/ }).max(300).refine((value) => /^https:\/\/(www\.)?tiktok\.com\//.test(value), "Lien TikTok attendu."),
+            caption: text(200),
+            views: z.string().trim().max(20).optional(),
+            // Miniature hébergée avec le site (/images/…) ou en https (UploadThing).
+            cover: z
+              .string()
+              .trim()
+              .max(500)
+              .refine((value) => /^\/images\/[\w./-]+$/.test(value) || z.url({ protocol: /^https$/ }).safeParse(value).success, "Adresse d'image invalide.")
+              .optional(),
+          })
+          .strict(),
+      )
+      .max(16),
+  })
+  .strict();
+
 export const contentUpdateSchema = z
   .object({
     method: z.array(titleText).max(10),
@@ -156,34 +186,8 @@ export const contentUpdateSchema = z
     afterDelivery: z.array(titleText).max(8),
     places: z.array(z.object({ label: text(80), lat: z.number().min(-90).max(90), lng: z.number().min(-180).max(180) }).strict()).max(20),
     licenceVsCustom: z.array(z.object({ criterion: text(60), licence: text(120), custom: text(120) }).strict()).max(10),
-    creator: z
-      .object({
-        platform: z.literal("tiktok").default("tiktok"),
-        handle: text(60),
-        profileUrl: z.url({ protocol: /^https$/ }).max(300),
-        bio: z.string().trim().max(300).optional(),
-        recordedAt: text(40),
-        stats: z.array(z.object({ label: text(40), value: text(20) }).strict()).max(6),
-        videos: z
-          .array(
-            z
-              .object({
-                url: z.url({ protocol: /^https$/ }).max(300).refine((value) => /^https:\/\/(www\.)?tiktok\.com\//.test(value), "Lien TikTok attendu."),
-                caption: text(200),
-                views: z.string().trim().max(20).optional(),
-                // Miniature hébergée avec le site (/images/…) ou en https (UploadThing).
-                cover: z
-                  .string()
-                  .trim()
-                  .max(500)
-                  .refine((value) => /^\/images\/[\w./-]+$/.test(value) || z.url({ protocol: /^https$/ }).safeParse(value).success, "Adresse d'image invalide.")
-                  .optional(),
-              })
-              .strict(),
-          )
-          .max(16),
-      })
-      .strict(),
+    creator: tiktokAccount,
+    businessCreator: tiktokAccount,
   })
   .partial()
   .strict();

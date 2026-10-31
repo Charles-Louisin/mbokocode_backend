@@ -7,6 +7,20 @@ import { publicJson } from "../../db/json.js";
 const text = (max: number, required = true) => ({ type: String, trim: true, maxlength: max, required });
 const sub = (fields: SchemaDefinition) => new Schema(fields, { _id: false });
 
+// Un compte TikTok : chiffres relevés à une date donnée, jamais estimés, et vidéos marquantes.
+const tiktokAccount = sub({
+  platform: { type: String, enum: ["tiktok"], default: "tiktok" },
+  handle: text(60),
+  profileUrl: text(300),
+  bio: text(300, false),
+  recordedAt: text(40),
+  stats: { type: [sub({ label: text(40), value: text(20) })], default: [] },
+  videos: {
+    type: [sub({ url: text(300), caption: text(200), views: text(20, false), cover: text(500, false) })],
+    default: [],
+  },
+});
+
 /** Pictogrammes autorisés : le site associe chaque clé à une icône connue. */
 export const ICON_KEYS = ["messages", "target", "shield", "code", "gauge", "handshake"] as const;
 
@@ -35,22 +49,10 @@ const siteContentSchema = new Schema(
     // Lieux où tournent des projets livrés (carte de l'accueil).
     places: { type: [sub({ label: text(80), lat: { type: Number, min: -90, max: 90, required: true }, lng: { type: Number, min: -180, max: 180, required: true } })], default: [] },
     licenceVsCustom: { type: [sub({ criterion: text(60), licence: text(120), custom: text(120) })], default: [] },
-    // Création de contenu (TikTok) : chiffres relevés à une date donnée, jamais estimés.
-    creator: {
-      type: sub({
-        platform: { type: String, enum: ["tiktok"], default: "tiktok" },
-        handle: text(60),
-        profileUrl: text(300),
-        bio: text(300, false),
-        recordedAt: text(40),
-        stats: { type: [sub({ label: text(40), value: text(20) })], default: [] },
-        videos: {
-          type: [sub({ url: text(300), caption: text(200), views: text(20, false), cover: text(500, false) })],
-          default: [],
-        },
-      }),
-      default: undefined,
-    },
+    // Création de contenu (TikTok) : le compte personnel (humour et apprentissage du dev) et le
+    // compte entreprise MBOKO CODE.
+    creator: { type: tiktokAccount, default: undefined },
+    businessCreator: { type: tiktokAccount, default: undefined },
   },
   { timestamps: true, toJSON: publicJson },
 );
