@@ -5,7 +5,7 @@ import { assertDatabaseReady } from "../../db/connection.js";
 import { notFound } from "../../utils/errors.js";
 import { adminEmails } from "../auth/auth.js";
 import { currentUser, type SessionGuards } from "../auth/session.js";
-import { SiteContent } from "../content/content.model.js";
+import { SiteContent, contentWithDefaults } from "../content/content.model.js";
 import { PricingPackage } from "../pricing/pricing.model.js";
 import { Service } from "../pricing/service.model.js";
 import { Project } from "../projects/project.model.js";
@@ -174,7 +174,7 @@ export function createAdminRouter({ guards, adminList, logger }: Deps) {
   router.get("/content", async (_req, res) => {
     const content = await SiteContent.findOne({ key: "site" });
     if (!content) throw notFound("Contenu introuvable : lance l'import initial.");
-    res.json({ data: content.toJSON() });
+    res.json({ data: contentWithDefaults(content) });
   });
 
   router.patch("/content", async (req, res) => {
@@ -183,7 +183,7 @@ export function createAdminRouter({ guards, adminList, logger }: Deps) {
     if (!content) throw notFound("Contenu introuvable : lance l'import initial.");
     const changed = await applyAndSave(content, input);
     await log(currentUser(res).id, "content.update", "content", content.id as string, changed.join(", "));
-    res.json({ data: content.toJSON() });
+    res.json({ data: contentWithDefaults(content) });
   });
 
   // Comptes : lecture seule. Le rôle n'est jamais stocké, il se déduit d'ADMIN_EMAILS.

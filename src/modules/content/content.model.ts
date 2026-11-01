@@ -1,5 +1,6 @@
 import { type InferSchemaType, Schema, type SchemaDefinition, model } from "mongoose";
 import { publicJson } from "../../db/json.js";
+import { seedContent } from "../../scripts/seed-data.js";
 
 // Contenu éditorial du site (document unique, clé « site ») : méthode, parcours, compétences,
 // langues, principes et engagements. Le site n'affiche que ce qui est enregistré ici.
@@ -59,3 +60,10 @@ const siteContentSchema = new Schema(
 
 export type SiteContentData = InferSchemaType<typeof siteContentSchema>;
 export const SiteContent = model("SiteContent", siteContentSchema);
+
+/** Contenu servi, avec le compte TikTok entreprise de l'import initial tant que la base ne l'a pas :
+ *  il s'affiche dès le déploiement, et le premier enregistrement depuis l'admin le stocke. */
+export function contentWithDefaults(content: { toJSON(): Record<string, unknown> }) {
+  const data = content.toJSON();
+  return data.businessCreator ? data : { ...data, businessCreator: seedContent.businessCreator };
+}

@@ -5,6 +5,7 @@ import { createApp } from "../app.js";
 import { loadConfig } from "../config/env.js";
 import { connectDatabase, disconnectDatabase } from "../db/connection.js";
 import { createLogger } from "../logger.js";
+import { SiteContent } from "../modules/content/content.model.js";
 import { Project } from "../modules/projects/project.model.js";
 import { seedDatabase } from "../scripts/seed-runner.js";
 
@@ -42,6 +43,13 @@ describe("contenu du site (base réelle)", () => {
     expect(res.body.data.journey[0]).toMatchObject({ kind: "venture", period: "Aujourd'hui" });
     expect(res.body.data.skillGroups).toHaveLength(3);
     expect(res.body.data).not.toHaveProperty("key");
+  });
+
+  it("sert le compte TikTok entreprise même quand la base ne l'a pas encore", async () => {
+    await SiteContent.updateOne({ key: "site" }, { $unset: { businessCreator: 1 } });
+    const res = await request(app).get("/api/v1/content").expect(200);
+    expect(res.body.data.businessCreator).toMatchObject({ handle: "mbokocode" });
+    expect(res.body.data.businessCreator.videos).toHaveLength(5);
   });
 
   it("relancer l'import ne crée pas de doublon", async () => {
